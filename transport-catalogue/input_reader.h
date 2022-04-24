@@ -2,9 +2,10 @@
 
 #include <list>
 #include <string>
-#include <algorithm>
 
 #include "transport_catalogue.h"
+
+namespace transport_catalogue {
 
 class InputReader {
 
@@ -19,7 +20,7 @@ TransportCatalogue* const catalogue_;
 
 public:
     explicit InputReader (TransportCatalogue* const trans_cat) : catalogue_(trans_cat) {
-    }
+    };
 
     void AddQuery (std::string_view str);
 
@@ -28,3 +29,5 @@ public:
     ~InputReader ();
 
 };
+
+}

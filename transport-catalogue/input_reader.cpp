@@ -4,6 +4,8 @@
 #include <string>
 #include <algorithm>
 
+using namespace transport_catalogue;
+
 InputReader::~InputReader () {
     PushQuery();
 }
@@ -17,64 +19,61 @@ void InputReader::AddQuery (std::string_view str) {
 }
 
 void InputReader::PushQuery () {
-    for (auto& query : querys_) {
-        if (query.is_stop) {
-            auto ptr_l = query.text.find(',');
-            auto ptr_r = query.text.find(',', ptr_l+1);
-            catalogue_->AddStop( query.name,
-                                std::stod(query.text.substr(0, ptr_l )),
-                                std::stod(query.text.substr(ptr_l+1, ((ptr_r != std::string::npos) ? ptr_r : (query.text.size() - 1) )  -ptr_l))
+    auto It_query = querys_.begin();
+
+    std::list<std::pair<std::string_view, std::list<std::pair<std::string_view, size_t>>>> distance_to_stop;
+
+    for ( ; It_query->is_stop; ++It_query) {
+
+        auto ptr_l = It_query->text.find(',');
+        auto ptr_r = It_query->text.find(',', ptr_l + 2);
+        if (ptr_r == std::string::npos)
+            ptr_r = It_query->text.size();
+
+        catalogue_->AddStop( It_query->name,
+                            std::stod(It_query->text.substr(0, ptr_l )),
+                            std::stod(It_query->text.substr(ptr_l + 2, ptr_r - ptr_l))
                                 );
 
-            if (ptr_r != std::string::npos) {
-                query.text.erase(0,ptr_r+2);
-            } else {
-                query.text = {};
-            }
-        } else {
-            std::vector<std::string_view> route;
-            size_t ptr_l = -2;
-            for(;;) {
-                auto ptr_r = query.text.find_first_of("->", ptr_l+2);
-                if (ptr_r != std::string::npos) {
-                    route.push_back( std::string_view(query.text).substr(ptr_l+2,ptr_r-ptr_l-3) );
-                    ptr_l = ptr_r;
-                } else {
-                    route.push_back( std::string_view(query.text).substr(ptr_l+2) );
-                    break;
-                }
-            }
-            if (query.text[ptr_l] == '-')
-                for (int i = route.size()-2; i>=0 ; --i)
-                    route.push_back(route[i]);
+        std::list<std::pair<std::string_view, size_t>> distance;
 
-            catalogue_->AddBus(query.name, route);
+        while(ptr_r != It_query->text.size()) {
+            ptr_l = ptr_r;
+            auto ptr_m = It_query->text.find('m', ptr_l + 2);
+            ptr_r = It_query->text.find(',', ptr_l + 2);
+
+            if (ptr_r == std::string::npos)
+                ptr_r = It_query->text.size();
+
+            distance.push_back( std::make_pair( std::string_view(It_query->text).substr(ptr_m + 5, ptr_r - ptr_m - 5),
+                                                std::stoul(It_query->text.substr(ptr_l + 2, ptr_m - ptr_l))
+                                                )
+                                );
         }
+        distance_to_stop.push_back({It_query->name, distance});
     }
 
-    for (auto It = querys_.begin(); It->is_stop; ++It) {
-        if (It->text.empty())
-            continue;
-        std::list<std::pair<std::string_view, size_t>> distance;
+    for (const auto& distance : distance_to_stop)
+        catalogue_->AddDistance(distance.first, distance.second);
+
+    for ( auto It_end =  querys_.end(); It_query != It_end; ++It_query) {
+        std::vector<std::string_view> route;
 
         size_t ptr_l = -2;
         for(;;) {
-            auto ptr_m = It->text.find('m', ptr_l + 2);
-            auto ptr_r = It->text.find(',', ptr_l + 2);
+            auto ptr_r = It_query->text.find_first_of("->", ptr_l + 2);
             if (ptr_r != std::string::npos) {
-                distance.push_back( std::make_pair( std::string_view(It->text).substr(ptr_m+5,ptr_r-ptr_m-5),
-                                                    std::stoul(It->text.substr(ptr_l+2, ptr_m-ptr_l))
-                                                    )
-                                    );
+                route.push_back( std::string_view(It_query->text).substr(ptr_l + 2, ptr_r - ptr_l - 3) );
                 ptr_l = ptr_r;
             } else {
-                distance.push_back( std::make_pair( std::string_view(It->text).substr(ptr_m+5),
-                                    std::stoul(It->text.substr(ptr_l+2, ptr_m-ptr_l))
-                                                    )
-                                    );
+                route.push_back( std::string_view(It_query->text).substr(ptr_l + 2) );
                 break;
             }
         }
-        catalogue_->AddDistance(It->name, distance);
+        if (It_query->text[ptr_l] == '-')
+            for (int i = route.size()-2; i>=0 ; --i)
+                route.push_back(route[i]);
+
+        catalogue_->AddBus(It_query->name, route);
     }
 }

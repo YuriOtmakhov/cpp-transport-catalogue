@@ -1,14 +1,11 @@
 #include "transport_catalogue.h"
 
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <set>
+
 #include <utility>
+#include <algorithm>
+#include <stdexcept>
 
-#include "geo.h"
-
+using namespace transport_catalogue;
 
 size_t TransportCatalogue::DistanceHasher::operator() (const std::pair<std::string_view, std::string_view> Stops) const {
     return static_cast<size_t>(std::hash<std::string_view> {} (Stops.first)*137 + std::hash<std::string_view> {} (Stops.second));
@@ -59,12 +56,11 @@ TransportCatalogue::Bus* TransportCatalogue::FindBus(const std::string_view str)
 BusDate TransportCatalogue::GetBusInfo (std::string_view str) const {
     BusDate ans;
     Bus* bus_ = FindBus(str);
-    ans.length = 0.0;
     ans.stops = bus_->route.size();
     std::set<Stop*> unique_stops;
-    double geo_length = 0;
+    double geo_length = 0.0;
     for (size_t i =0; i+1 < ans.stops; ++i) {
-        geo_length += ComputeDistance(bus_->route[i]->coordinates, bus_->route[i+1]->coordinates);
+        geo_length += detail::ComputeDistance(bus_->route[i]->coordinates, bus_->route[i+1]->coordinates);
         ans.length += GetDistance(bus_->route[i]->name, bus_->route[i+1]->name);
         unique_stops.insert(bus_->route[i]);
     }
@@ -87,8 +83,8 @@ std::vector<std::string_view> TransportCatalogue::GetStopInfo (std::string_view 
 size_t TransportCatalogue::GetDistance (const std::string_view stop_a, const std::string_view stop_b) const{
     if (stop_to_stop_distance_.count({stop_a,stop_b}))
         return stop_to_stop_distance_.at({stop_a,stop_b});
-    else if (stop_to_stop_distance_.count({stop_b,stop_a}))
+//    else if (stop_to_stop_distance_.count({stop_b,stop_a}))
         return stop_to_stop_distance_.at({stop_b,stop_a});
 
-    throw std::out_of_range("Stop not found");
+    //throw std::out_of_range("Stop not found");
 }
