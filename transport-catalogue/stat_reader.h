@@ -14,7 +14,7 @@ public:
     explicit StatReader (TransportCatalogue* const trans_cat) : catalogue_(trans_cat) {
     };
 
-    void GetStat(std::string_view str) const;
+    std::string GetStat(std::string_view str) const;
 
 };
 

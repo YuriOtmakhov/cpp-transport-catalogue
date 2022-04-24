@@ -4,32 +4,36 @@
 #include <optional>
 #include <iomanip>
 
+#include <sstream>
+
 using namespace transport_catalogue;
 
-void  StatReader::GetStat(std::string_view str) const {
+std::string  StatReader::GetStat(std::string_view str) const {
     using std::literals::string_literals::operator""s;
 
     auto n = str.find(' ')+1;
 
     std::string_view tipe = str.substr(0,n);
     str.remove_prefix(n);
+    std::stringstream ans;
     try{
         if (tipe == "Bus "s) {
             auto tmp = catalogue_->GetBusInfo(str);
-            std::cout<<tipe<<str<<": "s<<tmp.stops<<" stops on route, "s<<tmp.unique_stops<<
+            ans<<tipe<<str<<": "s<<tmp.stops<<" stops on route, "s<<tmp.unique_stops<<
             " unique stops, "s<<tmp.length<<" route length, "s<<std::setprecision(6)<<tmp.curvature<<" curvature\n"s;
         } else {
             const auto buses = catalogue_ -> GetStopInfo(str);
-            std::cout<<tipe<<str;
-            std::cout<<(buses.empty()? ": no buses"s : ": buses "s);
+            ans<<tipe<<str
+            <<(buses.empty()? ": no buses"s : ": buses "s);
 
             for (const auto& bus : buses)
-                std::cout<<bus<<' ';
-            std::cout<<'\n';
+                ans<<bus<<' ';
+            ans<<'\n';
         }
 
     }
     catch (const std::out_of_range& exp) {
-        std::cout<<tipe<<str<<": not found\n"s;
+        ans<<tipe<<str<<": not found\n"s;
     }
+    return ans.str();
 }

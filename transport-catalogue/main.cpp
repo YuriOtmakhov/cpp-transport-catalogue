@@ -24,10 +24,8 @@ int main () {
 
     for (transport_catalogue::StatReader output(&transport_catalogue); n; --n) {
         getline(std::cin, str);
-        output.GetStat(str);
+        std::cout<<output.GetStat(str);
     }
-
-
 
     return 0;
 }
