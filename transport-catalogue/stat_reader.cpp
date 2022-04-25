@@ -13,17 +13,17 @@ std::string  StatReader::GetStat(std::string_view str) const {
 
     auto n = str.find(' ')+1;
 
-    std::string_view tipe = str.substr(0,n);
+    std::string_view type = str.substr(0,n);
     str.remove_prefix(n);
     std::stringstream ans;
     try{
-        if (tipe == "Bus "s) {
+        if (type == "Bus "s) {
             auto tmp = catalogue_->GetBusInfo(str);
-            ans<<tipe<<str<<": "s<<tmp.stops<<" stops on route, "s<<tmp.unique_stops<<
+            ans<<type<<str<<": "s<<tmp.stops<<" stops on route, "s<<tmp.unique_stops<<
             " unique stops, "s<<tmp.length<<" route length, "s<<std::setprecision(6)<<tmp.curvature<<" curvature\n"s;
         } else {
             const auto buses = catalogue_ -> GetStopInfo(str);
-            ans<<tipe<<str
+            ans<<type<<str
             <<(buses.empty()? ": no buses"s : ": buses "s);
 
             for (const auto& bus : buses)
@@ -33,7 +33,7 @@ std::string  StatReader::GetStat(std::string_view str) const {
 
     }
     catch (const std::out_of_range& exp) {
-        ans<<tipe<<str<<": not found\n"s;
+        ans<<type<<str<<": not found\n"s;
     }
     return ans.str();
 }
