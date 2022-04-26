@@ -2,6 +2,7 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #include "transport_catalogue.h"
 
@@ -17,6 +18,9 @@ struct QueryDate {
 
 std::list<QueryDate> querys_;
 TransportCatalogue* const catalogue_;
+
+std::list<std::pair<std::string_view, size_t>> ParsQueryDistance (std::string_view query);
+std::vector<std::string_view> ParsQueryRoute (std::string_view query);
 
 public:
     explicit InputReader (TransportCatalogue* const trans_cat) : catalogue_(trans_cat) {

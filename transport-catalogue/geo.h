@@ -1,5 +1,6 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace transport_catalogue {
@@ -9,8 +10,7 @@ namespace detail {
 namespace constant {
 
 const int R_EARTH = 6371000;
-const double PI = 3.1415926535;
-const double DR = PI / 180.0;
+const double DR = M_PI / 180.0;
 
 }
 

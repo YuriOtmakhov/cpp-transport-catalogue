@@ -29,6 +29,9 @@ struct Stop {
 struct Bus {
     std::string name;
     std::vector<Stop*> route;
+    unsigned int unique_stops = 0;
+    size_t length = 0;
+    double curvature = 0.0;
 };
 
 struct DistanceHasher {

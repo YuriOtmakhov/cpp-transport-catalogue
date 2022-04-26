@@ -18,20 +18,39 @@ TransportCatalogue::~TransportCatalogue () {
         delete stop;
 }
 
-void TransportCatalogue::AddStop(std::string_view str, const double latitude, const double longitude) {
-    Stop* stop_ptn = new Stop { static_cast<std::string>(str),{latitude,longitude}};
+void TransportCatalogue::AddStop(std::string_view stop_name, const double latitude, const double longitude) {
+    Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude}};
     name_to_stops_[stop_ptn->name] = stop_ptn;
     stop_to_bus_[stop_ptn->name] = {};
 };
 
-void TransportCatalogue::AddBus(std::string_view str, const std::vector<std::string_view> stop_array) {
+void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array) {
     Bus* bus_ptn = new Bus;
-    bus_ptn->name = static_cast<std::string>(str);
-    for (auto stop : stop_array) {
-        bus_ptn->route.push_back(FindStop(stop));
-        stop_to_bus_[stop].insert(bus_ptn);
+    bus_ptn->name = static_cast<std::string>(bus_name);
+
+    std::set<std::string_view> unique_stops;
+    double geo_length = 0.0;
+
+    bus_ptn->route.push_back(FindStop(stop_array.front()));
+    stop_to_bus_[stop_array.front()].insert(bus_ptn);
+    unique_stops.insert(stop_array.front());
+
+    for (auto It = std::next(stop_array.begin()); It != stop_array.end(); ++It) {
+        Stop* old_stop = bus_ptn->route.back();
+
+        bus_ptn->route.push_back(FindStop(*It));
+        stop_to_bus_[*It].insert(bus_ptn);
+        unique_stops.insert(*It);
+
+        geo_length += detail::ComputeDistance(old_stop->coordinates, bus_ptn->route.back()->coordinates);
+        bus_ptn->length += GetDistance(old_stop->name, bus_ptn->route.back()->name);
+
     }
+
+    bus_ptn->unique_stops = unique_stops.size();
+    bus_ptn->curvature = static_cast<double>(bus_ptn->length) / geo_length;
     name_to_bus_[bus_ptn->name] = bus_ptn;
+
 };
 
 void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array) {
@@ -53,20 +72,15 @@ TransportCatalogue::Bus* TransportCatalogue::FindBus(const std::string_view str)
     return name_to_bus_.at(str);
 }
 
-BusDate TransportCatalogue::GetBusInfo (std::string_view str) const {
+BusDate TransportCatalogue::GetBusInfo (std::string_view name) const {
     BusDate ans;
-    Bus* bus_ = FindBus(str);
+    Bus* bus_ = FindBus(name);
     ans.stops = bus_->route.size();
-    std::set<Stop*> unique_stops;
-    double geo_length = 0.0;
-    for (size_t i =0; i+1 < ans.stops; ++i) {
-        geo_length += detail::ComputeDistance(bus_->route[i]->coordinates, bus_->route[i+1]->coordinates);
-        ans.length += GetDistance(bus_->route[i]->name, bus_->route[i+1]->name);
-        unique_stops.insert(bus_->route[i]);
-    }
-    unique_stops.insert(bus_->route[ans.stops - 1]);
-    ans.unique_stops = unique_stops.size();
-    ans.curvature = static_cast<double>(ans.length) / geo_length;
+
+    ans.length = bus_->length;
+
+    ans.unique_stops = bus_->unique_stops;
+    ans.curvature = bus_->curvature;
     return ans;
 }
 
