@@ -3,3 +3,4 @@ transport-catalogue/obj
 transport-catalogue/input_*
 transport-catalogue/cpp-transport-catalogue*
 *.txt
+*.json
