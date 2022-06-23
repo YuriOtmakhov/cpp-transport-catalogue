@@ -31,17 +31,22 @@ Node LoadArray(istream& input) {
 
 Node LoadNumber(istream& input) {
     string line;
-    getline(input, line, ',');
+    char ch;
+//    getline(input, line, ',');
+    for(; input >> ch && ch != ',' && ch != ']' && ch != '}';)
+        line+=ch;
+    if (ch != ',')
+        input.putback(ch);
 
     if ( (/*IsEscape(line[0]) ||*/ (line[0] != '-') ) && ( line[0]-'0' < 0 || 9 < line[0]-'0' ))
-        throw ParsingError("Parsing error"s);
+        throw ParsingError("Number parsing error: "s+line);
 
     while (IsEscape(line.back()))
         line.pop_back();
-    if (line.back() == ']' || line.back() == '}') {
-        input.putback(line.back());
-        line.pop_back();
-    }
+//    while (line.back() == ']' || line.back() == '}' || IsEscape(line.back())) {
+//        input.putback(line.back());
+//        line.pop_back();
+//    }
 
     if (string::npos == line.find_first_of(".Ee"s))
         return Node(stoi(line));

@@ -19,12 +19,12 @@ TransportCatalogue::~TransportCatalogue () {
 }
 
 void TransportCatalogue::AddStop(std::string_view stop_name, const double latitude, const double longitude) {
-    Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude}};
+    Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude},{}};
     name_to_stops_[stop_ptn->name] = stop_ptn;
 //    stop_to_bus_[stop_ptn->name] = {};
 };
 
-void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array) {
+void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string> stop_array) {
     Bus* bus_ptn = new Bus;
     bus_ptn->name = static_cast<std::string>(bus_name);
 
@@ -53,16 +53,16 @@ void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std
 
 };
 
-void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array) {
-    Stop* view_stop_a = FindStop(stop_a);
+void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string/*_view*/, size_t>> distance_array) {
+    Stop* ptr_stop_a = FindStop(stop_a);
 
     for (const auto& [stop_b, distance]: distance_array)
-        stop_to_stop_distance_[ std::make_pair( view_stop_a, FindStop(stop_b))] = distance;
+        stop_to_stop_distance_[ std::make_pair( ptr_stop_a, FindStop(stop_b))] = distance;
 }
 
 Stop* TransportCatalogue::FindStop(const std::string_view str) const {
     if (!name_to_stops_.count(str))
-        throw std::out_of_range("Stop not found");
+        throw std::out_of_range("Stop not found: " + static_cast<std::string>(str));
     return name_to_stops_.at(str);
 }
 

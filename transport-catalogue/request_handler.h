@@ -20,7 +20,7 @@ public:
     explicit RequestHandler (transport_catalogue::TransportCatalogue* const catalogue) : catalogue_(catalogue) {
     };
 
-    transport_catalogue::TransportCatalogue* const GetTransportCatalogue () const {
+    transport_catalogue::TransportCatalogue* GetTransportCatalogue () const {
         return catalogue_;
     }
 
