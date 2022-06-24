@@ -39,9 +39,9 @@ public:
     std::vector<transport_catalogue::Bus*> GetBusesByStop (std::string_view stop_name) const {
 //    catalogue_->FindStop(stop_name);
         std::vector<transport_catalogue::Bus*> ans;
-        auto buses_list = catalogue_->FindStop(stop_name)->buses;
+        const auto& buses_list = catalogue_->FindStop(stop_name)->buses;
         ans.reserve(buses_list.size());
-        for (auto* bus: buses_list)
+        for (const auto& bus: buses_list)
             ans.push_back(bus);
         std::sort(ans.begin(), ans.end(), [](const auto* const rhs, const auto* const lhs) { return rhs->name < lhs->name; } );
         return ans;

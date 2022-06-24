@@ -22,9 +22,9 @@ void TransportCatalogue::AddStop(std::string_view stop_name, const double latitu
     Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude},{}};
     name_to_stops_[stop_ptn->name] = stop_ptn;
 //    stop_to_bus_[stop_ptn->name] = {};
-};
+}
 
-void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string> stop_array) {
+void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array) {
     Bus* bus_ptn = new Bus;
     bus_ptn->name = static_cast<std::string>(bus_name);
 
@@ -51,9 +51,9 @@ void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std
     bus_ptn->curvature = static_cast<double>(bus_ptn->length) / geo_length;
     name_to_bus_[bus_ptn->name] = bus_ptn;
 
-};
+}
 
-void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string/*_view*/, size_t>> distance_array) {
+void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array) {
     Stop* ptr_stop_a = FindStop(stop_a);
 
     for (const auto& [stop_b, distance]: distance_array)

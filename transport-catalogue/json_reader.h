@@ -16,8 +16,8 @@ transport_catalogue::TransportCatalogue* const catalogue_;
 request_handler::RequestHandler* const handler_;
 std::optional<json::Document> json_document_;
 
-std::vector<std::string> ParsQueryRoute (const json::Array stops, bool is_round) {
-    std::vector<std::string> route;// = {"Morskoy vokzal", "Rivierskiy most"};
+std::vector<std::string_view> ParsQueryRoute (const json::Array stops, bool is_round) {
+    std::vector<std::string_view> route;// = {"Morskoy vokzal", "Rivierskiy most"};
     route.reserve( is_round ? stops.size() : (2*stops.size()) );
 
     for(const auto& stop : stops)
@@ -31,8 +31,11 @@ std::vector<std::string> ParsQueryRoute (const json::Array stops, bool is_round)
 
 void ParsingBaseRequests (const json::Node& document) {
     using std::literals::string_literals::operator""s;
+//    if (document.IsNull())
+//        return;
+
     std::list<const json::Node*> request_queue;
-    for (auto& request : document.AsArray())
+    for (const auto& request : document.AsArray())
         if (request.AsMap().at("type"s).AsString() == "Stop"s)
             request_queue.push_front(&request);
         else
@@ -40,16 +43,17 @@ void ParsingBaseRequests (const json::Node& document) {
 
     auto It_query = request_queue.begin();
 
-    std::list<std::pair<std::string, std::list<std::pair<std::string, size_t>>>> distance_to_stop;
+    std::list<std::pair<std::string_view, std::list<std::pair<std::string_view, size_t>>>> distance_to_stop;
 
-    for (auto stop_info = (*It_query)->AsMap(); stop_info.at("type"s).AsString() == "Stop"s; stop_info = (*(++It_query))->AsMap()) {
+    while ( (*It_query)->AsMap().at("type"s).AsString() == "Stop"s) {
+        const json::Dict& stop_info = (*It_query++)->AsMap();
 
         catalogue_->AddStop( stop_info.at("name"s).AsString(),
                             stop_info.at("latitude"s).AsDouble(),
                             stop_info.at("longitude"s).AsDouble()
                                 );
 
-        std::list<std::pair<std::string, size_t>> stop_list;
+        std::list<std::pair<std::string_view, size_t>> stop_list;
         for (auto& stop : stop_info.at("road_distances"s).AsMap())
             stop_list.push_back({stop.first, stop.second.AsInt()});
 
@@ -67,7 +71,7 @@ void ParsingBaseRequests (const json::Node& document) {
         catalogue_->AddDistance(distance.first, distance.second);
 
     while ( It_query != request_queue.end()) {
-        auto bus_info = (*(It_query++))->AsMap();
+        const auto& bus_info = (*(It_query++))->AsMap();
         catalogue_->AddBus(bus_info.at("name"s).AsString(), ParsQueryRoute(bus_info.at("stops"s).AsArray(), bus_info.at("is_roundtrip"s).AsBool() ));
     }
 }
@@ -75,10 +79,10 @@ void ParsingBaseRequests (const json::Node& document) {
 json::Node StopRequests(const json::Node request) {
     using std::literals::string_literals::operator""s;
     json::Array buses;
-    for(auto bus : handler_->GetBusesByStop(request.AsMap().at("name"s).AsString()))
+    for(const auto& bus : handler_->GetBusesByStop(request.AsMap().at("name"s).AsString()))
         buses.push_back(bus->name);
-    if (buses.empty())
-        buses.push_back("no buses"s);
+//    if (buses.empty())
+//        buses.push_back("no buses"s);
 //        return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},{"buses"s, "no buses"s}});
     return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},{"buses"s, buses}});
 }
@@ -98,18 +102,19 @@ json::Node BusRequests(const json::Node request) {
 const json::Document ParsingStatRequests(const json::Node& document) {
     using std::literals::string_literals::operator""s;
     json::Array ans_array;
-    for (auto& request : document.AsArray()) {
-    try {
-        if (request.AsMap().at("type"s).AsString() == "Stop"s)
-            ans_array.push_back(StopRequests(request));
-        else
-            ans_array.push_back(BusRequests(request));
-    }
-        catch(std::out_of_range&) {
-            ans_array.push_back(json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
-                        {"error_message"s, "not found"s}}));
+//    if (!document.IsNull())
+        for (const auto& request : document.AsArray()) {
+        try {
+            if (request.AsMap().at("type"s).AsString() == "Stop"s)
+                ans_array.push_back(StopRequests(request));
+            else
+                ans_array.push_back(BusRequests(request));
         }
-    }
+            catch(std::out_of_range&) {
+                ans_array.push_back(json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
+                        {"error_message"s, "not found"s}}));
+            }
+        }
     return json::Document(json::Node(ans_array));
 }
 
@@ -121,8 +126,18 @@ public:
         using std::literals::string_literals::operator""s;
 //        if (!json_document_)
 //            std::cerr<<"KO0"s<<std::endl;
-        *json_document_ = json::Load(input);
-
+        try{
+        json_document_ = json::Load(input);
+        }
+        catch(...) {
+            std::cout<<"[]"<<std::endl;
+            return;
+        }
+        if ((*json_document_).GetRoot().AsMap().at("base_requests"s).IsNull())
+        {
+            std::cout<<"[]"<<std::endl;
+            return;
+        }
 //        if ((*json_document_).GetRoot().IsMap())
 //            std::cerr<<"KO1"s<<std::endl;
 
@@ -138,8 +153,8 @@ public:
 
 //        if (!(*json_document_).GetRoot().IsMap())
 //            throw std::runtime_error ("JSON not load"s);
-
-        json::Print(ParsingStatRequests((*json_document_).GetRoot().AsMap().at("stat_requests"s)), output);
+        if (json_document_)
+            json::Print(ParsingStatRequests((*json_document_).GetRoot().AsMap().at("stat_requests"s)), output);
 
     }
 
