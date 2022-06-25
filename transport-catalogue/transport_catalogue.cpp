@@ -1,6 +1,5 @@
 #include "transport_catalogue.h"
 
-
 #include <utility>
 #include <algorithm>
 #include <stdexcept>
@@ -21,7 +20,6 @@ TransportCatalogue::~TransportCatalogue () {
 void TransportCatalogue::AddStop(std::string_view stop_name, const double latitude, const double longitude) {
     Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude},{}};
     name_to_stops_[stop_ptn->name] = stop_ptn;
-//    stop_to_bus_[stop_ptn->name] = {};
 }
 
 void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array) {
@@ -68,37 +66,12 @@ Stop* TransportCatalogue::FindStop(const std::string_view str) const {
 
 Bus* TransportCatalogue::FindBus(const std::string_view str) const {
     if (!name_to_bus_.count(str))
-        throw std::out_of_range("Bus not found");
+        throw std::out_of_range("Bus not found: " + static_cast<std::string>(str));
     return name_to_bus_.at(str);
 }
-
-//BusDate TransportCatalogue::GetBusInfo (std::string_view name) const {
-//    BusDate ans;
-//    Bus* bus_ = FindBus(name);
-//    ans.stops = bus_->route.size();
-//
-//    ans.length = bus_->length;
-//
-//    ans.unique_stops = bus_->unique_stops;
-//    ans.curvature = bus_->curvature;
-//    return ans;
-//}
-//
-//std::vector<std::string_view> TransportCatalogue::GetStopInfo (std::string_view str) const {
-//    if (!stop_to_bus_.count(str))
-//        throw std::out_of_range("Stop not found");
-//    std::vector<std::string_view> ans;
-//    for (Bus* bus: stop_to_bus_.at(str))
-//        ans.push_back( bus->name );
-//    std::sort(ans.begin(), ans.end());
-//    return ans;
-//}
 
 size_t TransportCatalogue::GetDistance (Stop* stop_a, Stop* stop_b) const{
     if (stop_to_stop_distance_.count({stop_a,stop_b}))
         return stop_to_stop_distance_.at({stop_a,stop_b});
-//    else if (stop_to_stop_distance_.count({stop_b,stop_a}))
-        return stop_to_stop_distance_.at({stop_b,stop_a});
-
-    //throw std::out_of_range("Stop not found");
+    return stop_to_stop_distance_.at({stop_b,stop_a});
 }

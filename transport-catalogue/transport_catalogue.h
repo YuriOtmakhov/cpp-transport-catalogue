@@ -8,7 +8,6 @@
 #include <set>
 
 #include "domain.h"
-//#include "geo.h"
 
 namespace transport_catalogue {
 
@@ -20,7 +19,6 @@ struct DistanceHasher {
 
 std::unordered_map<std::string_view, Stop*> name_to_stops_;
 std::unordered_map<std::string_view, Bus*> name_to_bus_;
-//std::unordered_map<std::string_view, std::unordered_set<Bus*>> stop_to_bus_;
 std::unordered_map<std::pair<Stop*, Stop*>, size_t, DistanceHasher> stop_to_stop_distance_;
 
 size_t GetDistance (Stop* stop_a, Stop* stop_b) const;
@@ -38,10 +36,6 @@ public:
     Stop* FindStop(const std::string_view str) const;
 
     Bus* FindBus(const std::string_view str) const;
-
-//    BusDate GetBusInfo (std::string_view str) const;
-//
-//    std::vector<std::string_view> GetStopInfo (std::string_view str) const;
 
 };
 }

@@ -315,11 +315,11 @@ bool operator!= (const Node& lhs, const Node& rhs){
 
 bool operator== (const Document& lhs, const Document& rhs) {
     return lhs.GetRoot() == rhs.GetRoot();
-};
+}
 
 bool operator!= (const Document& lhs, const Document& rhs) {
     return !(lhs == rhs);
-};
+}
 
 Document::Document(Node root)
     : root_(move(root)) {
