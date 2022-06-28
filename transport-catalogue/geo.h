@@ -3,9 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-namespace transport_catalogue {
-
-namespace detail {
+namespace geo {
 
 namespace constant {
 
@@ -29,8 +27,6 @@ inline double ComputeDistance(Coordinates from, Coordinates to) {
     return std::acos(sin(from.lat * DR) * std::sin(to.lat * DR)
                 + std::cos(from.lat * DR) * std::cos(to.lat * DR) * std::cos(std::abs(from.lng - to.lng) * DR))
         *  R_EARTH;
-}
-
 }
 
 }

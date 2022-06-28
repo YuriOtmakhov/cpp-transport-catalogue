@@ -1,6 +1,6 @@
 #include "geo.h"
 
-using namespace transport_catalogue::detail;
+using namespace geo;
 
 bool Coordinates::operator==(const Coordinates& other) const {
     return lat == other.lat && lng == other.lng;

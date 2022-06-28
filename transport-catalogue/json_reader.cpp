@@ -95,10 +95,16 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
     return json::Document(json::Node(ans_array));
 }
 
+void ParsingRenderSettings (const json::Node& settings) const {
+
+}
+
 void JsonReader::ReadJSON (std::istream& input) {
     json_document_ = json::Load(input);
 
-    ParsingBaseRequests( (*json_document_).GetRoot().AsMap().at("base_requests"s));
+    ParsingBaseRequests( (*json_document_).GetRoot().AsMap().at("base_requests"s) );
+
+    ParsingRenderSettings( (*json_document_).GetRoot().AsMap().at("render_settings"s) );
 
 }
 

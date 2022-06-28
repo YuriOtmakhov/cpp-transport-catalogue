@@ -19,7 +19,7 @@ struct Bus;
 
 struct Stop {
     std::string name;
-    detail::Coordinates coordinates;
+    geo::Coordinates coordinates;
     std::unordered_set<Bus*> buses;
 };
 
