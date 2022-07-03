@@ -14,10 +14,16 @@ struct Rgb {
     uint8_t red = 0;
     uint8_t green = 0;
     uint8_t blue = 0;
+    Rgb() = default;
+    Rgb(uint8_t r, uint8_t g, uint8_t b) : red(r), green(g), blue(b) {
+    };
 };
 
 struct Rgba : public Rgb {
     double opacity = 1.0;
+    Rgba() = default;
+    Rgba(uint8_t r, uint8_t g, uint8_t b, double o) : Rgb(r,g,b), opacity(o) {
+    };
 };
 
 using Color = std::variant<std::monostate, std::string, svg::Rgb, svg::Rgba>;
@@ -47,9 +53,9 @@ std::ostream& operator<< (std::ostream& out,const StrokeLineJoin line_join);
 template <class Owner>
 class PathProps {
 
-Color fill_color_;
-Color stroke_color_;
-double stroke_width_ = 0.0;
+std::optional<Color> fill_color_;
+std::optional<Color> stroke_color_;
+std::optional<double> stroke_width_;
 std::optional<StrokeLineCap> line_cap_;
 std::optional<StrokeLineJoin> line_join_;
 
@@ -81,12 +87,12 @@ protected:
     void RenderAttrs(std::ostream& out) const {
         using namespace std::literals;
 
-        //if (fill_color_ != std::monostate)
-            out << " fill=\""sv << fill_color_ << "\" "sv;
-        //if (stroke_color_ != std::monostate)
-            out << " stroke=\""sv << stroke_color_ << "\" "sv;
+        if (fill_color_)
+            out << " fill=\""sv << *fill_color_ << "\" "sv;
+        if (stroke_color_)
+            out << " stroke=\""sv << *stroke_color_ << "\" "sv;
         if (stroke_width_)
-            out << " stroke-width=\""sv<< stroke_width_ << "\" "sv;
+            out << " stroke-width=\""sv<< *stroke_width_ << "\" "sv;
         if (line_cap_)
             out << " stroke-linecap=\""sv << *line_cap_ <<"\" "sv;
         if (line_join_)

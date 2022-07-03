@@ -36,11 +36,11 @@ struct ColorPrinter {
     }
     void operator() (svg::Rgb color) {
         using namespace std::literals;
-        out<<"rgb(color.red,color.green,color.blue)";
+        out<<"rgb("s<< +color.red <<','<<+color.green<<','<<+color.blue<<")"s;
     }
     void operator() (svg::Rgba color) {
         using namespace std::literals;
-        out<<"rgba(color.red,color.green,color.blue)";
+        out<<"rgba("s<<+color.red<<','<<+color.green<<','<<+color.blue<<','<<color.opacity<<")"s;
     }
 };
 
