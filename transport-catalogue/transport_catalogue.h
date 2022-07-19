@@ -9,7 +9,7 @@
 
 #include "domain.h"
 
-namespace transport_catalogue {
+namespace t_catalogue {
 
 class TransportCatalogue {
 
@@ -32,6 +32,8 @@ public:
     void AddBus(std::string_view str, const std::vector<std::string_view> stop_array);
 
     void AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array);
+
+    const std::list<Bus*> GetAllBus () const;
 
     Stop* FindStop(const std::string_view str) const;
 

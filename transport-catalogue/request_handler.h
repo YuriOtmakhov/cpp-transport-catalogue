@@ -11,21 +11,23 @@ namespace request_handler {
 
 class RequestHandler {
 
-transport_catalogue::TransportCatalogue* const catalogue_;
+t_catalogue::TransportCatalogue* const catalogue_;
 //renderer::MapRenderer* const renderer_;
 
 public:
-    explicit RequestHandler () : catalogue_(new transport_catalogue::TransportCatalogue) {
+    explicit RequestHandler () : catalogue_(new t_catalogue::TransportCatalogue) {
     };
 
-    explicit RequestHandler (transport_catalogue::TransportCatalogue* const catalogue) : catalogue_(catalogue) {
+    explicit RequestHandler (t_catalogue::TransportCatalogue* const catalogue) : catalogue_(catalogue) {
     };
 
-    transport_catalogue::TransportCatalogue* GetTransportCatalogue () const;
+    t_catalogue::TransportCatalogue* GetTransportCatalogue () const;
 
-    transport_catalogue::BusDate GetBusInfo (std::string_view name) const;
+    t_catalogue::BusDate GetBusInfo (std::string_view name) const;
 
-    std::vector<transport_catalogue::Bus*> GetBusesByStop (std::string_view stop_name) const;
+    const std::vector<t_catalogue::Bus*> GetBusesByStop (std::string_view stop_name) const;
+
+    const std::vector<t_catalogue::Bus*> GetAllRound () const;
 
 //    svg::Document RenderMap() const;
 

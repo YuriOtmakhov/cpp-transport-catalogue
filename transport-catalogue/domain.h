@@ -6,7 +6,7 @@
 
 #include "geo.h"
 
-namespace transport_catalogue {
+namespace t_catalogue {
 
 struct BusDate {
     unsigned int stops = 0;

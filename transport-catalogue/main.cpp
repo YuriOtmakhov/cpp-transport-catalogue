@@ -7,11 +7,12 @@
 
 int main () {
     request_handler::RequestHandler handler;
-    renderer::MapRenderer render(&handler);
+    renderer::MapRenderer render;
     json_reader::JsonReader reader(&handler, &render);
 
     reader.ReadJSON(std::cin);
 
+    render.RenderMap(handler.GetAllRound());
     //reader.WriteJSON(std::cout);
 
     return 0;

@@ -14,7 +14,7 @@ namespace json_reader {
 
 class JsonReader {
 
-transport_catalogue::TransportCatalogue* const catalogue_;
+t_catalogue::TransportCatalogue* const catalogue_;
 request_handler::RequestHandler* const handler_;
 renderer::MapRenderer* const render_;
 std::optional<json::Document> json_document_;
@@ -29,7 +29,26 @@ json::Node BusRequests(const json::Node request) const;
 
 const json::Document ParsingStatRequests(const json::Node& document) const;
 
-void ParsingRenderSettings (const json::Node& settings) const;
+template<class Function>
+void ParsingColorSettings (const json::Node& color, Function function){
+
+    if (color.IsString())
+        function(color.AsString());
+    else if (color.AsArray().size() == 3)
+        function(
+        render_->MakeColor (color.AsArray()[0].AsInt(),
+                color.AsArray()[1].AsInt(),
+                color.AsArray()[2].AsInt()
+                ));
+    else
+        function (render_->MakeColor  (color.AsArray()[0].AsInt(),
+                color.AsArray()[1].AsInt(),
+                color.AsArray()[2].AsInt(),
+                color.AsArray()[3].AsDouble()
+                ));
+};
+
+void ParsingRenderSettings (const json::Node& settings);
 
 public:
     explicit JsonReader(request_handler::RequestHandler* const handler, renderer::MapRenderer* const render) :

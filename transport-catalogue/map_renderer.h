@@ -106,20 +106,71 @@ struct {
     svg::Point stop_lable_offset;
     svg::Color underlayer_color;
     double underlayer_width;
-    std::vector<svg::Color> color_palerre;
+    std::vector<svg::Color> color_palette;
 } settings_;
 
-request_handler::RequestHandler* const handler_;
+//request_handler::RequestHandler* const handler_;
 
 public:
-    MapRenderer (request_handler::RequestHandler* const handler) : handler_(handler) {
+//    MapRenderer (request_handler::RequestHandler* const handler) : handler_(handler) {
+//    }
+
+    MapRenderer& SetBorder(double width, double height, double padding) {
+        settings_.width = std::move(width);
+        settings_.height = std::move(height);
+        settings_.padding = std::move(padding);
+        return *this;
     }
 
-    void SetWidth( ) {
-    };
+    MapRenderer& SetLineWidth(double width) {
+        settings_.stroke_width = std::move(width);
+        return *this;
+    }
 
-    svg::Document RenderMap () const {
+    MapRenderer& SetStopRadius(double radius) {
+        settings_.stop_radius = std::move(radius);
+        return *this;
+    }
 
+    MapRenderer& SetBusFont(double font_size, double font_offset_x, double font_offset_y) {
+        settings_.bus_lable_font_size = std::move(font_size);
+        settings_.bus_lable_offset = {std::move(font_offset_x), std::move(font_offset_y)};
+        return *this;
+    }
+
+    MapRenderer& SetStopFont(double font_size, double font_offset_x, double font_offset_y) {
+        settings_.stop_lable_font_size = std::move(font_size);
+        settings_.stop_lable_offset = {std::move(font_offset_x), std::move(font_offset_y)};
+        return *this;
+    }
+
+    MapRenderer& SetUnderlayerWidth(double width) {
+        settings_.underlayer_width = std::move(width);
+        return *this;
+    }
+
+    svg::Color MakeColor(int R, int G, int B)  const {
+        return (svg::Rgb(R,G,B));
+    }
+
+    svg::Color MakeColor(int R, int G, int B, double opacity)  const {
+        return (svg::Rgba(R,G,B, opacity));
+    }
+
+    MapRenderer& SetUnderlayerColor(svg::Color color) {
+        settings_.underlayer_color = std::move(color);
+        return *this;
+    }
+
+    MapRenderer& SetAddColorInPalette(svg::Color color) {
+        settings_.color_palette.push_back(std::move(color));
+        return *this;
+    }
+
+    svg::Document RenderMap (const std::vector<t_catalogue::Bus*> map_) const {
+        for (auto bus : map_) {
+
+        }
     };
 
 };

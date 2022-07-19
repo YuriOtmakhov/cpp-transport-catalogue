@@ -65,7 +65,7 @@ json::Node JsonReader::StopRequests(const json::Node request) const {
 }
 
 json::Node JsonReader::BusRequests(const json::Node request) const {
-    transport_catalogue::BusDate bus_date = handler_->GetBusInfo(request.AsMap().at("name"s).AsString());
+    t_catalogue::BusDate bus_date = handler_->GetBusInfo(request.AsMap().at("name"s).AsString());
 
     return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
                         {"curvature"s, bus_date.curvature},
@@ -95,8 +95,55 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
     return json::Document(json::Node(ans_array));
 }
 
-void ParsingRenderSettings (const json::Node& settings) const {
+//template<class Function>
+//void JsonReader::ParsingColorSettings (const json::Node& color, Function function) const {
+//
+//    if (color.IsString())
+//        function(color.AsString());
+//    else if (color.AsArray().size() == 3)
+//        function(color.AsArray()[0].AsInt(),
+//                color.AsArray()[1].AsInt(),
+//                color.AsArray()[2].AsInt()
+//                );
+//    else
+//        function(color.AsArray()[0].AsInt(),
+//                color.AsArray()[1].AsInt(),
+//                color.AsArray()[2].AsInt(),
+//                color.AsArray()[3].AsDouble()
+//                );
+//};
 
+void JsonReader::ParsingRenderSettings (const json::Node& settings) {
+    render_->SetBorder(settings.AsMap().at("width"s).AsDouble(),
+                        settings.AsMap().at("height"s).AsDouble(),
+                        settings.AsMap().at("padding"s).AsDouble()
+                        )
+            .SetLineWidth(settings.AsMap().at("line_width"s).AsDouble())
+            .SetStopRadius(settings.AsMap().at("stop_radius"s).AsDouble())
+            .SetBusFont(settings.AsMap().at("bus_label_font_size"s).AsDouble(),
+                        settings.AsMap().at("bus_label_offset"s).AsArray().front().AsDouble(),
+                        settings.AsMap().at("bus_label_offset"s).AsArray().back().AsDouble()
+                        )
+            .SetStopFont(settings.AsMap().at("stop_label_font_size"s).AsDouble(),
+                        settings.AsMap().at("stop_label_offset"s).AsArray().front().AsDouble(),
+                        settings.AsMap().at("stop_label_offset"s).AsArray().back().AsDouble()
+                        )
+            .SetUnderlayerWidth(settings.AsMap().at("underlayer_width"s).AsDouble());
+
+    ParsingColorSettings(settings.AsMap().at("underlayer_color"s), render_->SetUnderlayerColor);
+//    if (settings.AsMap().at("underlayer_color"s).IsString())
+//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsString());
+//    else if (settings.AsMap().at("underlayer_color"s).AsArray().size() == 3)
+//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsArray()[0].AsInt(),
+//                                    settings.AsMap().at("underlayer_color"s).AsArray()[1].AsInt(),
+//                                    settings.AsMap().at("underlayer_color"s).AsArray()[2].AsInt()
+//                                    );
+//    else
+//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsArray()[0].AsInt(),
+//                                    settings.AsMap().at("underlayer_color"s).AsArray()[1].AsInt(),
+//                                    settings.AsMap().at("underlayer_color"s).AsArray()[2].AsInt(),
+//                                    settings.AsMap().at("underlayer_color"s).AsArray()[3].AsDouble()
+//                                    );
 }
 
 void JsonReader::ReadJSON (std::istream& input) {

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-using namespace transport_catalogue;
+using namespace t_catalogue;
 
 size_t TransportCatalogue::DistanceHasher::operator() (const std::pair<Stop*, Stop*> Stops) const {
     return static_cast<size_t>(std::hash<Stop*> {} (Stops.first)*137 + std::hash<Stop*> {} (Stops.second));
@@ -74,4 +74,11 @@ size_t TransportCatalogue::GetDistance (Stop* stop_a, Stop* stop_b) const{
     if (stop_to_stop_distance_.count({stop_a,stop_b}))
         return stop_to_stop_distance_.at({stop_a,stop_b});
     return stop_to_stop_distance_.at({stop_b,stop_a});
+}
+
+const std::list<Bus*> TransportCatalogue::GetAllBus () const {
+    std::list<Bus*> bus_list;
+    for (const auto& [key, bus] : name_to_bus_)
+        bus_list.push_back(bus);
+    return std::move(bus_list);
 }
