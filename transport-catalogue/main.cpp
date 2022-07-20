@@ -12,7 +12,7 @@ int main () {
 
     reader.ReadJSON(std::cin);
 
-    render.RenderMap(handler.GetAllRound());
+    render.RenderMap(handler.GetAllRound(), handler.GetMap());
     //reader.WriteJSON(std::cout);
 
     return 0;

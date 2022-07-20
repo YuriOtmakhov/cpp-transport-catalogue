@@ -44,6 +44,15 @@ const std::vector<t_catalogue::Bus*> RequestHandler::GetAllRound () const {
     return std::move(ans);
 }
 
+const std::vector<geo::Coordinates> RequestHandler::GetMap () const {
+    std::vector<geo::Coordinates> ans;
+    const auto stop_list = catalogue_->GetAllStops();
+    ans.reserve(stop_list.size());
+    for (t_catalogue::Stop* stop : stop_list)
+        if (!stop->buses.empty())
+            ans.push_back(stop->coordinates);
+    return std::move(ans);
+}
 
 
 

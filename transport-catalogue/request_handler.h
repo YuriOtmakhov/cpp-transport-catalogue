@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "transport_catalogue.h"
+#include "geo.h"
 //#include "map_renderer.h"
 
 namespace request_handler {
@@ -28,6 +29,8 @@ public:
     const std::vector<t_catalogue::Bus*> GetBusesByStop (std::string_view stop_name) const;
 
     const std::vector<t_catalogue::Bus*> GetAllRound () const;
+
+    const std::vector<geo::Coordinates> GetMap () const;
 
 //    svg::Document RenderMap() const;
 

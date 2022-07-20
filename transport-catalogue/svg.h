@@ -241,10 +241,10 @@ public:
      Document doc;
      doc.Add(Circle().SetCenter({20, 30}).SetRadius(15));
     */
-//    template <typename Obj>
-//    void Add(Obj obj) {
-//        objects_.emplace_back(std::make_unique<Obj>(std::move(obj)));
-//    }
+    template <typename Obj>
+    void Add(Obj obj) {
+        objects_.emplace_back(std::make_unique<Obj>(std::move(obj)));
+    }
     // Добавляет в svg-документ объект-наследник svg::Object
     void AddPtr(std::unique_ptr<Object>&& obj) override;
 

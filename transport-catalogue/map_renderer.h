@@ -167,10 +167,11 @@ public:
         return *this;
     }
 
-    svg::Document RenderMap (const std::vector<t_catalogue::Bus*> map_) const {
-        for (auto bus : map_) {
-
-        }
+    svg::Document RenderMap (const std::vector<t_catalogue::Bus*>bus_list, const std::vector<geo::Coordinates> map) const {
+        svg::Document document;
+//        for (const auto bus : map_) {
+//            document.Add(Polyline())
+//        }
     };
 
 };

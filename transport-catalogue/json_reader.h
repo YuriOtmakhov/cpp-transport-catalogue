@@ -29,24 +29,9 @@ json::Node BusRequests(const json::Node request) const;
 
 const json::Document ParsingStatRequests(const json::Node& document) const;
 
-template<class Function>
-void ParsingColorSettings (const json::Node& color, Function function){
+void ParsingColorUnderlayerSettings (const json::Node& color);
 
-    if (color.IsString())
-        function(color.AsString());
-    else if (color.AsArray().size() == 3)
-        function(
-        render_->MakeColor (color.AsArray()[0].AsInt(),
-                color.AsArray()[1].AsInt(),
-                color.AsArray()[2].AsInt()
-                ));
-    else
-        function (render_->MakeColor  (color.AsArray()[0].AsInt(),
-                color.AsArray()[1].AsInt(),
-                color.AsArray()[2].AsInt(),
-                color.AsArray()[3].AsDouble()
-                ));
-};
+void ParsingColorPaletteSettings (const json::Node& color);
 
 void ParsingRenderSettings (const json::Node& settings);
 

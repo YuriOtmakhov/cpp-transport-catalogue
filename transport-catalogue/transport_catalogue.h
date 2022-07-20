@@ -20,6 +20,8 @@ struct DistanceHasher {
 std::unordered_map<std::string_view, Stop*> name_to_stops_;
 std::unordered_map<std::string_view, Bus*> name_to_bus_;
 std::unordered_map<std::pair<Stop*, Stop*>, size_t, DistanceHasher> stop_to_stop_distance_;
+std::list<Stop*> stops_;
+std::list<Bus*> buses_;
 
 size_t GetDistance (Stop* stop_a, Stop* stop_b) const;
 
@@ -34,6 +36,8 @@ public:
     void AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array);
 
     const std::list<Bus*> GetAllBus () const;
+
+    const std::list<Stop*> GetAllStops () const;
 
     Stop* FindStop(const std::string_view str) const;
 
