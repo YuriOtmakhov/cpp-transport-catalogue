@@ -167,11 +167,28 @@ public:
         return *this;
     }
 
-    svg::Document RenderMap (const std::vector<t_catalogue::Bus*>bus_list, const std::vector<geo::Coordinates> map) const {
+    svg::Document RenderMap (const std::vector<t_catalogue::Bus*>bus_array, const std::vector<geo::Coordinates> map) const {
+        const detail::SphereProjector proj(map.begin(), map.end(),
+                                    settings_.width,
+                                    settings_.height,
+                                    settings_.padding);
+
         svg::Document document;
-//        for (const auto bus : map_) {
-//            document.Add(Polyline())
-//        }
+//        size_t num_color = 0;
+        for (auto bus_It = bus_array.begin(); bus_It != bus_array.end(); ++bus_It) {
+            svg::Polyline bus_route;
+            bus_route.SetFillColor("none")
+                .SetStrokeColor(settings_.color_palette[(bus_It - bus_array.begin())% settings_.color_palette.size()])
+                .SetStrokeWidth(settings_.stroke_width)
+                .SetStrokeLineCap(settings_.stroke_linecap)
+                .SetStrokeLineJoin(settings_.stroke_linejoin);
+
+            for(const auto& stop : (*bus_It)->route)
+                bus_route.AddPoint(proj(stop->coordinates));
+
+            document.Add(std::move(bus_route));
+        }
+        return document;
     };
 
 };
