@@ -31,7 +31,7 @@ public:
 
     void AddStop(std::string_view str, const double latitude, const double longitude);
 
-    void AddBus(std::string_view str, const std::vector<std::string_view> stop_array);
+    void AddBus(std::string_view str, const std::vector<std::string_view> stop_array, bool is_round);
 
     void AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array);
 

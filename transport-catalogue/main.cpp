@@ -12,8 +12,8 @@ int main () {
 
     reader.ReadJSON(std::cin);
 
-    render.RenderMap(handler.GetAllRound(), handler.GetMap()).Render(std::cout);
-    //reader.WriteJSON(std::cout);
+//    render.RenderMap(handler.GetAllRound(), handler.GetMap()).Render(std::cout);
+    reader.WriteJSON(std::cout);
 
     return 0;
 }

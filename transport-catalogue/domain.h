@@ -29,6 +29,7 @@ struct Bus {
     unsigned int unique_stops = 0;
     size_t length = 0;
     double curvature = 0.0;
+    bool is_round = false;
 };
 
 }

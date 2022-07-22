@@ -42,16 +42,16 @@ public:
         // Находим точки с минимальной и максимальной долготой
         const auto [left_it, right_it] = std::minmax_element(
             points_begin, points_end,
-            [](auto lhs, auto rhs) { return lhs.lng < rhs.lng; });
-        min_lon_ = left_it->lng;
-        const double max_lon = right_it->lng;
+            [](auto lhs, auto rhs) { return lhs->coordinates.lng < rhs->coordinates.lng; });
+        min_lon_ = (*left_it)->coordinates.lng;
+        const double max_lon = (*right_it)->coordinates.lng;
 
         // Находим точки с минимальной и максимальной широтой
         const auto [bottom_it, top_it] = std::minmax_element(
             points_begin, points_end,
-            [](auto lhs, auto rhs) { return lhs.lat < rhs.lat; });
-        const double min_lat = bottom_it->lat;
-        max_lat_ = top_it->lat;
+            [](auto lhs, auto rhs) { return lhs->coordinates.lat < rhs->coordinates.lat; });
+        const double min_lat = (*bottom_it)->coordinates.lat;
+        max_lat_ = (*top_it)->coordinates.lat;
 
         // Вычисляем коэффициент масштабирования вдоль координаты x
         std::optional<double> width_zoom;
@@ -109,8 +109,6 @@ struct {
     std::vector<svg::Color> color_palette;
 } settings_;
 
-//request_handler::RequestHandler* const handler_;
-
 public:
 //    MapRenderer (request_handler::RequestHandler* const handler) : handler_(handler) {
 //    }
@@ -167,7 +165,7 @@ public:
         return *this;
     }
 
-    svg::Document RenderMap (const std::vector<t_catalogue::Bus*>bus_array, const std::vector<geo::Coordinates> map) const {
+    svg::Document RenderMap (const std::vector<t_catalogue::Bus*>buses, const std::vector<t_catalogue::Stop*> map) const {
         const detail::SphereProjector proj(map.begin(), map.end(),
                                     settings_.width,
                                     settings_.height,
@@ -175,10 +173,10 @@ public:
 
         svg::Document document;
 //        size_t num_color = 0;
-        for (auto bus_It = bus_array.begin(); bus_It != bus_array.end(); ++bus_It) {
+        for (auto bus_It = buses.begin(); bus_It != buses.end(); ++bus_It) {
             svg::Polyline bus_route;
             bus_route.SetFillColor("none")
-                .SetStrokeColor(settings_.color_palette[(bus_It - bus_array.begin())% settings_.color_palette.size()])
+                .SetStrokeColor(settings_.color_palette[(bus_It - buses.begin())% settings_.color_palette.size()])
                 .SetStrokeWidth(settings_.stroke_width)
                 .SetStrokeLineCap(settings_.stroke_linecap)
                 .SetStrokeLineJoin(settings_.stroke_linejoin);
@@ -188,6 +186,67 @@ public:
 
             document.Add(std::move(bus_route));
         }
+            //-------------------------------------------------------------
+        for (auto bus_It = buses.begin(); bus_It != buses.end(); ++bus_It) {
+            svg::Text bus_name, underlayer;
+            bus_name.SetPosition(proj((*bus_It)->route.front()->coordinates))
+                    .SetOffset(settings_.bus_lable_offset)
+                    .SetFontSize(settings_.bus_lable_font_size)
+                    .SetFontFamily("Verdana")
+                    .SetFontWeight("bold")
+                    .SetData((*bus_It)->name);
+            underlayer = bus_name;
+
+            bus_name.SetFillColor(settings_.color_palette[(bus_It - buses.begin())% settings_.color_palette.size()]);
+
+            underlayer.SetFillColor(settings_.underlayer_color)
+                    .SetStrokeColor(settings_.underlayer_color)
+                    .SetStrokeWidth(settings_.underlayer_width)
+                    .SetStrokeLineCap(settings_.stroke_linecap)
+                    .SetStrokeLineJoin(settings_.stroke_linejoin);
+
+            document.Add(underlayer);
+            document.Add(bus_name);
+            if (!(*bus_It)->is_round && (*bus_It)->route[(*bus_It)->route.size()/2]->name!= (*bus_It)->route.front()->name ) {
+                svg::Text bus_name_end = bus_name, underlayer_end = underlayer;
+                bus_name_end.SetPosition(proj((*bus_It)->route[(*bus_It)->route.size()/2]->coordinates));
+                underlayer_end.SetPosition(proj((*bus_It)->route[(*bus_It)->route.size()/2]->coordinates));
+                document.Add(underlayer_end);
+                document.Add(bus_name_end);
+            }
+
+            //-------------------------------------------------------------
+        }
+
+        for(const auto& stop : map)
+            document.Add(svg::Circle().SetCenter(proj(stop->coordinates))
+                                    .SetRadius(settings_.stop_radius)
+                                    .SetFillColor("white")
+                        );
+
+        //-------------------------------------------------------------
+        for(const auto& stop : map) {
+            svg::Text stop_name, underlayer;
+            stop_name.SetPosition(proj(stop->coordinates))
+                    .SetOffset(settings_.stop_lable_offset)
+                    .SetFontSize(settings_.stop_lable_font_size)
+                    .SetFontFamily("Verdana")
+//                    .SetFontWeight("bold")
+                    .SetData(stop->name);
+            underlayer = stop_name;
+
+            stop_name.SetFillColor("black");
+
+            underlayer.SetFillColor(settings_.underlayer_color)
+                    .SetStrokeColor(settings_.underlayer_color)
+                    .SetStrokeWidth(settings_.underlayer_width)
+                    .SetStrokeLineCap(settings_.stroke_linecap)
+                    .SetStrokeLineJoin(settings_.stroke_linejoin);
+
+            document.Add(underlayer);
+            document.Add(stop_name);
+        }
+
         return document;
     };
 

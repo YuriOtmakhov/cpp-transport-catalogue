@@ -27,6 +27,8 @@ json::Node StopRequests(const json::Node request) const;
 
 json::Node BusRequests(const json::Node request) const;
 
+json::Node MapRequests(const json::Node request) const;
+
 const json::Document ParsingStatRequests(const json::Node& document) const;
 
 void ParsingColorUnderlayerSettings (const json::Node& color);

@@ -23,7 +23,7 @@ void TransportCatalogue::AddStop(std::string_view stop_name, const double latitu
     name_to_stops_[stops_.back()->name] = stops_.back();
 }
 
-void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array) {
+void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std::string_view> stop_array, bool is_round) {
     buses_.push_back(new Bus);
     buses_.back()->name = static_cast<std::string>(bus_name);
 
@@ -48,6 +48,7 @@ void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std
 
     buses_.back()->unique_stops = unique_stops.size();
     buses_.back()->curvature = static_cast<double>(buses_.back()->length) / geo_length;
+    buses_.back()->is_round = is_round;
     name_to_bus_[buses_.back()->name] = buses_.back();
 
 }

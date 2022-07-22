@@ -1,6 +1,7 @@
 #include "json_reader.h"
 
 #include <list>
+#include <sstream>
 
 using namespace json_reader;
 using std::literals::string_literals::operator""s;
@@ -53,7 +54,7 @@ void JsonReader::ParsingBaseRequests (const json::Node& document) {
 
     while ( It_query != request_queue.end()) {
         const auto& bus_info = (*(It_query++))->AsMap();
-        catalogue_->AddBus(bus_info.at("name"s).AsString(), ParsQueryRoute(bus_info.at("stops"s).AsArray(), bus_info.at("is_roundtrip"s).AsBool() ));
+        catalogue_->AddBus(bus_info.at("name"s).AsString(), ParsQueryRoute(bus_info.at("stops"s).AsArray(), bus_info.at("is_roundtrip"s).AsBool() ), bus_info.at("is_roundtrip"s).AsBool());
     }
 }
 
@@ -75,6 +76,14 @@ json::Node JsonReader::BusRequests(const json::Node request) const {
 
 }
 
+json::Node JsonReader::MapRequests(const json::Node request) const {
+    std::ostringstream map;
+    render_->RenderMap( handler_->GetAllRound(), handler_->GetMap()).Render(map);
+    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
+                        {"map"s, map.str()}});
+
+}
+
 const json::Document JsonReader::ParsingStatRequests(const json::Node& document) const {
     json::Array ans_array;
     if (document.AsArray().empty())
@@ -84,8 +93,10 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
         try {
             if (request.AsMap().at("type"s).AsString() == "Stop"s)
                 ans_array.push_back(StopRequests(request));
-            else
+            else if (request.AsMap().at("type"s).AsString() == "Bus"s)
                 ans_array.push_back(BusRequests(request));
+            else if (request.AsMap().at("type"s).AsString() == "Map"s)
+                ans_array.push_back(MapRequests(request));
         }
             catch(std::out_of_range&) {
                 ans_array.push_back(json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
