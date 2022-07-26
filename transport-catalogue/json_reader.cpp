@@ -106,34 +106,17 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
     return json::Document(json::Node(ans_array));
 }
 
-void JsonReader::ParsingColorUnderlayerSettings (const json::Node& color) {
+auto JsonReader::ParsingColor (const json::Node& color) const{
 
     if (color.IsString())
-        render_->SetUnderlayerColor(color.AsString());
+        return render_->MakeColor(color.AsString());
     else if (color.AsArray().size() == 3)
-        render_->SetUnderlayerColor(render_->MakeColor(color.AsArray()[0].AsInt(),
+        return (render_->MakeColor(color.AsArray()[0].AsInt(),
                 color.AsArray()[1].AsInt(),
                 color.AsArray()[2].AsInt()
                 ));
     else
-        render_->SetUnderlayerColor(render_->MakeColor(color.AsArray()[0].AsInt(),
-                color.AsArray()[1].AsInt(),
-                color.AsArray()[2].AsInt(),
-                color.AsArray()[3].AsDouble()
-                ));
-}
-
-void JsonReader::ParsingColorPaletteSettings (const json::Node& color) {
-
-    if (color.IsString())
-        render_->SetAddColorInPalette(color.AsString());
-    else if (color.AsArray().size() == 3)
-        render_->SetAddColorInPalette(render_->MakeColor(color.AsArray()[0].AsInt(),
-                color.AsArray()[1].AsInt(),
-                color.AsArray()[2].AsInt()
-                ));
-    else
-        render_->SetAddColorInPalette(render_->MakeColor(color.AsArray()[0].AsInt(),
+       return (render_->MakeColor(color.AsArray()[0].AsInt(),
                 color.AsArray()[1].AsInt(),
                 color.AsArray()[2].AsInt(),
                 color.AsArray()[3].AsDouble()
@@ -157,23 +140,11 @@ void JsonReader::ParsingRenderSettings (const json::Node& settings) {
                         )
             .SetUnderlayerWidth(settings.AsMap().at("underlayer_width"s).AsDouble());
 
-    ParsingColorUnderlayerSettings(settings.AsMap().at("underlayer_color"s));
+    render_->SetUnderlayerColor(ParsingColor(settings.AsMap().at("underlayer_color"s)));
 
     for (const auto& color : settings.AsMap().at("color_palette"s).AsArray())
-        ParsingColorPaletteSettings(color);
-//    if (settings.AsMap().at("underlayer_color"s).IsString())
-//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsString());
-//    else if (settings.AsMap().at("underlayer_color"s).AsArray().size() == 3)
-//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsArray()[0].AsInt(),
-//                                    settings.AsMap().at("underlayer_color"s).AsArray()[1].AsInt(),
-//                                    settings.AsMap().at("underlayer_color"s).AsArray()[2].AsInt()
-//                                    );
-//    else
-//        render_->SetUnderlayerColor(settings.AsMap().at("underlayer_color"s).AsArray()[0].AsInt(),
-//                                    settings.AsMap().at("underlayer_color"s).AsArray()[1].AsInt(),
-//                                    settings.AsMap().at("underlayer_color"s).AsArray()[2].AsInt(),
-//                                    settings.AsMap().at("underlayer_color"s).AsArray()[3].AsDouble()
-//                                    );
+        render_->AddColorInPalette(ParsingColor(color));
+
 }
 
 void JsonReader::ReadJSON (std::istream& input) {

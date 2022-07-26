@@ -31,9 +31,7 @@ json::Node MapRequests(const json::Node request) const;
 
 const json::Document ParsingStatRequests(const json::Node& document) const;
 
-void ParsingColorUnderlayerSettings (const json::Node& color);
-
-void ParsingColorPaletteSettings (const json::Node& color);
+auto ParsingColor (const json::Node& color) const;
 
 void ParsingRenderSettings (const json::Node& settings);
 

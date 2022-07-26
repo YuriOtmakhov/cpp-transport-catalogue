@@ -11,14 +11,13 @@ size_t TransportCatalogue::DistanceHasher::operator() (const std::pair<Stop*, St
 }
 
 TransportCatalogue::~TransportCatalogue () {
-    for (const auto[name, bus]: name_to_bus_)
+    for (const auto& bus: buses_)
         delete bus;
-    for (const auto[name, stop]: name_to_stops_)
+    for (const auto& stop: stops_)
         delete stop;
 }
 
 void TransportCatalogue::AddStop(std::string_view stop_name, const double latitude, const double longitude) {
-//    Stop* stop_ptn = new Stop { static_cast<std::string>(stop_name),{latitude,longitude},{}};
     stops_.push_back(new Stop { static_cast<std::string>(stop_name),{latitude,longitude},{}});
     name_to_stops_[stops_.back()->name] = stops_.back();
 }
@@ -79,17 +78,9 @@ size_t TransportCatalogue::GetDistance (Stop* stop_a, Stop* stop_b) const{
 }
 
 const std::list<Bus*> TransportCatalogue::GetAllBus () const {
-//    std::list<Bus*> bus_list;
-//    for (const auto& [key, bus] : name_to_bus_)
-//        bus_list.push_back(bus);
-//    return std::move(bus_list);
     return buses_;
 }
 
 const std::list<Stop*> TransportCatalogue::GetAllStops () const {
-//    std::list<Stop*> stop_list;
-//    for (const auto& [key, stop] : name_to_stops_)
-//        stop_list.push_back(stop);
-//    return std::move(bus_list);
     return stops_;
 }

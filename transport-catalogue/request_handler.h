@@ -5,15 +5,12 @@
 #include <vector>
 
 #include "transport_catalogue.h"
-//#include "geo.h"
-//#include "map_renderer.h"
 
 namespace request_handler {
 
 class RequestHandler {
 
 t_catalogue::TransportCatalogue* const catalogue_;
-//renderer::MapRenderer* const renderer_;
 
 public:
     explicit RequestHandler () : catalogue_(new t_catalogue::TransportCatalogue) {
@@ -31,8 +28,6 @@ public:
     const std::vector<t_catalogue::Bus*> GetAllRound () const;
 
     const std::vector<t_catalogue::Stop*> GetMap () const;
-
-//    svg::Document RenderMap() const;
 
 };
 

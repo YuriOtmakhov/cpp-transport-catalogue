@@ -35,11 +35,6 @@ const std::vector<t_catalogue::Bus*> RequestHandler::GetAllRound () const {
     for (t_catalogue::Bus* bus : bus_list)
         if (!bus->route.empty())
             ans.push_back(bus);
-
-//    const auto& buses_list = catalogue_->FindStop(stop_name)->buses;
-//    ans.reserve(buses_list.size());
-//    for (const auto& bus: buses_list)
-//        ans.push_back(bus);
     std::sort(ans.begin(), ans.end(), [](const auto* const rhs, const auto* const lhs) { return rhs->name < lhs->name; } );
     return ans;
 }
