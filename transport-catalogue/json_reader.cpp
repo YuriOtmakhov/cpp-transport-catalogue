@@ -62,25 +62,40 @@ json::Node JsonReader::StopRequests(const json::Node request) const {
     json::Array buses;
     for(const auto& bus : handler_->GetBusesByStop(request.AsMap().at("name"s).AsString()))
         buses.push_back(bus->name);
-    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},{"buses"s, buses}});
+    return json::Builder{}.StartDict()
+            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+            .Key("buses"s).Value(buses)
+            .EndDict().Build();
+//    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},{"buses"s, buses}});
 }
 
 json::Node JsonReader::BusRequests(const json::Node request) const {
     t_catalogue::BusDate bus_date = handler_->GetBusInfo(request.AsMap().at("name"s).AsString());
 
-    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
-                        {"curvature"s, bus_date.curvature},
-                        {"route_length"s, static_cast<int>(bus_date.length)},
-                        {"stop_count"s, static_cast<int>(bus_date.stops)},
-                        {"unique_stop_count"s, static_cast<int>(bus_date.unique_stops)}});
+    return json::Builder{}.StartDict()
+            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+            .Key("curvature"s).Value(bus_date.curvature)
+            .Key("route_length"s).Value(static_cast<int>(bus_date.length))
+            .Key("stop_count"s).Value(static_cast<int>(bus_date.stops))
+            .Key("unique_stop_count"s).Value(static_cast<int>(bus_date.unique_stops))
+            .EndDict().Build();
+//    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
+//                        {"curvature"s, bus_date.curvature},
+//                        {"route_length"s, static_cast<int>(bus_date.length)},
+//                        {"stop_count"s, static_cast<int>(bus_date.stops)},
+//                        {"unique_stop_count"s, static_cast<int>(bus_date.unique_stops)}});
 
 }
 
 json::Node JsonReader::MapRequests(const json::Node request) const {
     std::ostringstream map;
     render_->RenderMap( handler_->GetAllRound(), handler_->GetMap()).Render(map);
-    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
-                        {"map"s, map.str()}});
+    return json::Builder{}.StartDict()
+            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+            .Key("map"s).Value(map.str())
+            .EndDict().Build();
+//    return json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
+//                        {"map"s, map.str()}});
 
 }
 
@@ -99,8 +114,12 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
                 ans_array.push_back(MapRequests(request));
         }
             catch(std::out_of_range&) {
-                ans_array.push_back(json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
-                        {"error_message"s, "not found"s}}));
+                ans_array.push_back(json::Builder{}.StartDict()
+                                            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+                                            .Key("error_message"s).Value("not found"s)
+                                    .EndDict().Build());
+//                ans_array.push_back(json::Dict({{"request_id"s, request.AsMap().at("id"s).AsInt()},
+//                        {"error_message"s, "not found"s}}));
             }
     }
     return json::Document(json::Node(ans_array));

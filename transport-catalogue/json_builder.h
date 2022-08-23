@@ -91,6 +91,8 @@ public:
     ValueArrayItemContext Value(ValueType node);
 };
 
+bool IsCorrectEnd ();
+
 public:
 
     KeyItemContext Key(std::string key);
