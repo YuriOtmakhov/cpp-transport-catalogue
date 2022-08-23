@@ -9,6 +9,7 @@
 #include "transport_catalogue.h"
 #include "map_renderer.h"
 #include "json.h"
+#include "json_builder.h"
 
 namespace json_reader {
 

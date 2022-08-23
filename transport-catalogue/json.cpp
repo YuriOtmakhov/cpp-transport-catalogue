@@ -55,7 +55,7 @@ Node LoadString(istream& input) {
     std::string str;
     while (true) {
         if (it == end)
-            throw ParsingError("String parsing error");
+            throw ParsingError("String parsing error"s);
 
         if (*it == '"') {
             ++it;
@@ -63,7 +63,7 @@ Node LoadString(istream& input) {
         } else if (*it == '\\') {
             ++it;
             if (it == end)
-                throw ParsingError("String parsing error");
+                throw ParsingError("String parsing error"s);
 
             switch (*it) {
                 case 'n':
@@ -180,6 +180,10 @@ const ValueType& Node::GetValue() const {
     return *this;
 }
 
+ValueType& Node::GetValue() {
+    return *this;
+}
+
 bool Node::IsInt() const {
     return std::holds_alternative<int>(*this);
 }
@@ -214,38 +218,38 @@ bool Node::IsMap() const {
 
 bool Node::AsBool() const {
     if (!IsBool())
-        throw std::logic_error ("is not bool");
+        throw std::logic_error ("is not bool"s);
     return std::get<bool>(*this);
 }
 
 double Node::AsDouble() const {
     if (!IsDouble())
-        throw std::logic_error ("is not double");
+        throw std::logic_error ("is not double"s);
 
     return (IsPureDouble() ? std::get<double>(*this) : static_cast<double>(std::get<int>(*this)) );
 }
 
 const Array& Node::AsArray() const {
     if (!IsArray())
-        throw std::logic_error ("is not array");
+        throw std::logic_error ("is not array"s);
     return std::get<Array>(*this);
 }
 
 const Dict& Node::AsMap() const {
     if (!IsMap())
-        throw std::logic_error ("is not map");
+        throw std::logic_error ("is not map"s);
     return std::get<Dict>(*this);
 }
 
 int Node::AsInt() const {
     if (!IsInt())
-        throw std::logic_error ("is not int");
+        throw std::logic_error ("is not int"s);
     return std::get<int>(*this);
 }
 
 const string& Node::AsString() const {
     if (!IsString())
-        throw std::logic_error ("is not string");
+        throw std::logic_error ("is not string"s);
     return std::get<std::string>(*this);
 }
 

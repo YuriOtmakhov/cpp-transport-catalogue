@@ -25,6 +25,7 @@ public:
     using variant::variant;
 
     const ValueType& GetValue() const;
+    ValueType& GetValue();
 
     bool IsInt() const;
     bool IsDouble() const;
