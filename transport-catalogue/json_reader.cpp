@@ -99,6 +99,16 @@ json::Node JsonReader::MapRequests(const json::Node request) const {
 
 }
 
+json::Node JsonReader::RouteRequests(const json::Node request) const {
+//    std::ostringstream map;
+//    render_->RenderMap( handler_->GetAllRound(), handler_->GetMap()).Render(map);
+//    return json::Builder{}.StartDict()
+//            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+//            .Key("map"s).Value(map.str())
+//            .EndDict().Build();
+
+}
+
 const json::Document JsonReader::ParsingStatRequests(const json::Node& document) const {
     json::Array ans_array;
     if (document.AsArray().empty())
@@ -112,6 +122,8 @@ const json::Document JsonReader::ParsingStatRequests(const json::Node& document)
                 ans_array.push_back(BusRequests(request));
             else if (request.AsMap().at("type"s).AsString() == "Map"s)
                 ans_array.push_back(MapRequests(request));
+            else if (request.AsMap().at("type"s).AsString() == "Route"s)
+                ans_array.push_back(RouteRequests(request));
         }
             catch(std::out_of_range&) {
                 ans_array.push_back(json::Builder{}.StartDict()
@@ -166,12 +178,18 @@ void JsonReader::ParsingRenderSettings (const json::Node& settings) {
 
 }
 
+void ParsingRoutingSettings(const json::Node& settings) {
+
+};
+
 void JsonReader::ReadJSON (std::istream& input) {
     json_document_ = json::Load(input);
 
     ParsingBaseRequests( (*json_document_).GetRoot().AsMap().at("base_requests"s) );
 
     ParsingRenderSettings( (*json_document_).GetRoot().AsMap().at("render_settings"s) );
+
+    ParsingRoutingSettings( (*json_document_).GetRoot().AsMap().at("routing_settings"s) );
 
 }
 

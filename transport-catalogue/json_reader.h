@@ -30,11 +30,15 @@ json::Node BusRequests(const json::Node request) const;
 
 json::Node MapRequests(const json::Node request) const;
 
+json::Node RouteRequests(const json::Node request) const
+
 const json::Document ParsingStatRequests(const json::Node& document) const;
 
 auto ParsingColor (const json::Node& color) const;
 
 void ParsingRenderSettings (const json::Node& settings);
+
+void ParsingRoutingSettings(const json::Node& settings);
 
 public:
     explicit JsonReader(request_handler::RequestHandler* const handler, renderer::MapRenderer* const render) :
