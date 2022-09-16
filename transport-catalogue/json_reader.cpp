@@ -100,6 +100,8 @@ json::Node JsonReader::MapRequests(const json::Node request) const {
 }
 
 json::Node JsonReader::RouteRequests(const json::Node request) const {
+    if(!router_->IsInit())
+        router_->InitRouter();
 //    std::ostringstream map;
 //    render_->RenderMap( handler_->GetAllRound(), handler_->GetMap()).Render(map);
 //    return json::Builder{}.StartDict()
@@ -178,8 +180,9 @@ void JsonReader::ParsingRenderSettings (const json::Node& settings) {
 
 }
 
-void ParsingRoutingSettings(const json::Node& settings) {
-
+void JsonReader::ParsingRoutingSettings(const json::Node& settings) {
+    router_->SetWaitTime(settings.AsMap().at("bus_wait_time"s).AsInt())
+            .SetVelocity(settings.AsMap().at("bus_velocity"s).AsDouble());
 };
 
 void JsonReader::ReadJSON (std::istream& input) {
