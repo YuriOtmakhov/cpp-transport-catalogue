@@ -101,13 +101,8 @@ json::Node JsonReader::MapRequests(const json::Node request) const {
 
 json::Node JsonReader::RouteRequests(const json::Node request) const {
     if(!router_->IsInit())
-        router_->InitRouter();
-//    std::ostringstream map;
-//    render_->RenderMap( handler_->GetAllRound(), handler_->GetMap()).Render(map);
-//    return json::Builder{}.StartDict()
-//            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
-//            .Key("map"s).Value(map.str())
-//            .EndDict().Build();
+        router_->InitRouter(handler_->GetAllRound(), handler_->GetAllStops());
+
 
 }
 

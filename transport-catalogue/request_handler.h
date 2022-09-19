@@ -27,6 +27,8 @@ public:
 
     const std::vector<t_catalogue::Bus*> GetAllRound () const;
 
+    const std::vector<t_catalogue::Stop*> GetAllStops () const;
+
     const std::vector<t_catalogue::Stop*> GetMap () const;
 
 };
