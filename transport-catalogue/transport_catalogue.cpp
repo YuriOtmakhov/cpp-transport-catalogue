@@ -41,7 +41,8 @@ void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std
         unique_stops.insert(*It);
 
         geo_length += geo::ComputeDistance(old_stop->coordinates, buses_.back()->route.back()->coordinates);
-        buses_.back()->length += GetDistance(old_stop, buses_.back()->route.back());
+        buses_.back()->stop_to_stop_length.emplace_back(GetDistance(old_stop, buses_.back()->route.back()));
+        buses_.back()->length += buses_.back()->stop_to_stop_length.back();
 
     }
 

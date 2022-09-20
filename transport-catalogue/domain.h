@@ -26,6 +26,7 @@ struct Stop {
 struct Bus {
     std::string name;
     std::vector<Stop*> route;
+    std::vector<size_t> stop_to_stop_length;
     unsigned int unique_stops = 0;
     size_t length = 0;
     double curvature = 0.0;

@@ -101,9 +101,30 @@ json::Node JsonReader::MapRequests(const json::Node request) const {
 
 json::Node JsonReader::RouteRequests(const json::Node request) const {
     if(!router_->IsInit())
-        router_->InitRouter(handler_->GetAllRound(), handler_->GetAllStops());
+        router_->InitRouter(handler_->GetAllRound(), catalogue_->GetAllStops());
 
+    auto [total_time, round_items]= router_->BuilRoute(catalogue_->FindStop(request.AsMap().at("from"s).AsString()),catalogue_->FindStop(request.AsMap().at("to"s).AsString()));
+    json::Array items;
+    for (const auto& item : round_items)
+        if (item.span_count)
+            items.push_back( json::Builder{}.StartDict()
+                            .Key("type"s).Value("Bus"s)
+                            .Key("bus"s).Value(static_cast<std::string>(item.name))
+                            .Key("span_count"s).Value(item.span_count)
+                            .Key("time"s).Value(item.time)
+                            .EndDict().Build() );
+        else
+           items.push_back( json::Builder{}.StartDict()
+                            .Key("type"s).Value("Wait"s)
+                            .Key("stop_name"s).Value(static_cast<std::string>(item.name))
+                            .Key("time"s).Value(item.time)
+                            .EndDict().Build() );
 
+    return json::Builder{}.StartDict()
+            .Key("request_id"s).Value(request.AsMap().at("id"s).AsInt())
+            .Key("total_time"s).Value(total_time)
+            .Key("items"s).Value(items)
+            .EndDict().Build();
 }
 
 const json::Document JsonReader::ParsingStatRequests(const json::Node& document) const {
@@ -178,7 +199,7 @@ void JsonReader::ParsingRenderSettings (const json::Node& settings) {
 void JsonReader::ParsingRoutingSettings(const json::Node& settings) {
     router_->SetWaitTime(settings.AsMap().at("bus_wait_time"s).AsInt())
             .SetVelocity(settings.AsMap().at("bus_velocity"s).AsDouble());
-};
+}
 
 void JsonReader::ReadJSON (std::istream& input) {
     json_document_ = json::Load(input);
