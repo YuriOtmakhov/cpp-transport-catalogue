@@ -17,7 +17,7 @@ namespace router {
 struct EdgeAttribute {
     std::string_view name {};
     double time = 0.0;
-    int /*size_t*/ span_count = 0;
+    int span_count = 0;
 
     bool operator< (const EdgeAttribute& rhs) const;
 
@@ -27,12 +27,13 @@ struct EdgeAttribute {
 };
 
 class BusRouter {
-int bus_wait_time_ = 0;
-double bus_velocity = 1.0;
 
-std::unordered_map<t_catalogue::Stop*, size_t> number_by_stop_;
-std::optional<graph::DirectedWeightedGraph<EdgeAttribute>> bus_graph_;
-std::optional<graph::Router<EdgeAttribute>> router_;
+    int bus_wait_time_ = 0;
+    double bus_velocity = 1.0;
+
+    std::unordered_map<t_catalogue::Stop*, size_t> number_by_stop_;
+    std::optional<graph::DirectedWeightedGraph<EdgeAttribute>> bus_graph_;
+    std::optional<graph::Router<EdgeAttribute>> router_;
 
 public:
     BusRouter& SetWaitTime(int time);

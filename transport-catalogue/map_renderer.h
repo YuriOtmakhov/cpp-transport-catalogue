@@ -17,14 +17,14 @@ namespace renderer {
 namespace detail {
 
 class SphereProjector {
-static inline const double EPSILON = 1e-6;
+    static inline const double EPSILON = 1e-6;
 
-double padding_;
-double min_lon_ = 0;
-double max_lat_ = 0;
-double zoom_coeff_ = 0;
+    double padding_;
+    double min_lon_ = 0;
+    double max_lat_ = 0;
+    double zoom_coeff_ = 0;
 
-bool IsZero(double value);
+    bool IsZero(double value);
 
 public:
     template <typename PointInputIt>
@@ -56,14 +56,14 @@ struct {
     std::vector<svg::Color> color_palette;
 } settings_;
 
-svg::Polyline RenderBusRoute (const t_catalogue::Bus* bus_It, const detail::SphereProjector& function, size_t num_palette) const;
-svg::Text RenderDefaultUnderlayer(const svg::Point coordinates, const std::string& name) const;
-svg::Text RenderBusUnderlayer (const svg::Point coordinates, const std::string& name) const;
-svg::Text RenderStopUnderlayer (const svg::Point coordinates, const std::string& name) const;
-svg::Text RenderDefaultName(const svg::Point coordinates, const std::string& name, svg::Color color) const;
-svg::Text RenderBusName (const svg::Point coordinates, const std::string& name, size_t num_palette) const;
-svg::Text RenderStopName (const svg::Point coordinates, const std::string& name) const;
-svg::Circle RenderStop (const svg::Point coordinates) const;
+    svg::Polyline RenderBusRoute (const t_catalogue::Bus* bus_It, const detail::SphereProjector& function, size_t num_palette) const;
+    svg::Text RenderDefaultUnderlayer(const svg::Point coordinates, const std::string& name) const;
+    svg::Text RenderBusUnderlayer (const svg::Point coordinates, const std::string& name) const;
+    svg::Text RenderStopUnderlayer (const svg::Point coordinates, const std::string& name) const;
+    svg::Text RenderDefaultName(const svg::Point coordinates, const std::string& name, svg::Color color) const;
+    svg::Text RenderBusName (const svg::Point coordinates, const std::string& name, size_t num_palette) const;
+    svg::Text RenderStopName (const svg::Point coordinates, const std::string& name) const;
+    svg::Circle RenderStop (const svg::Point coordinates) const;
 
 public:
 

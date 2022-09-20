@@ -13,17 +13,17 @@ namespace t_catalogue {
 
 class TransportCatalogue {
 
-struct DistanceHasher {
-    size_t operator() (const std::pair<Stop*, Stop*> Stops) const;
-};
+    struct DistanceHasher {
+        size_t operator() (const std::pair<Stop*, Stop*> Stops) const;
+    };
 
-std::unordered_map<std::string_view, Stop*> name_to_stops_;
-std::unordered_map<std::string_view, Bus*> name_to_bus_;
-std::unordered_map<std::pair<Stop*, Stop*>, size_t, DistanceHasher> stop_to_stop_distance_;
-std::list<Stop*> stops_;
-std::list<Bus*> buses_;
+    std::unordered_map<std::string_view, Stop*> name_to_stops_;
+    std::unordered_map<std::string_view, Bus*> name_to_bus_;
+    std::unordered_map<std::pair<Stop*, Stop*>, size_t, DistanceHasher> stop_to_stop_distance_;
+    std::list<Stop*> stops_;
+    std::list<Bus*> buses_;
 
-size_t GetDistance (Stop* stop_a, Stop* stop_b) const;
+    size_t GetDistance (Stop* stop_a, Stop* stop_b) const;
 
 public:
 
