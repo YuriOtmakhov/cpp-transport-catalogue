@@ -39,10 +39,6 @@ const std::vector<t_catalogue::Bus*> RequestHandler::GetAllRound () const {
     return ans;
 }
 
-//const std::vector<t_catalogue::Stop*> RequestHandler::GetAllStops () const {
-//    return std::vector<t_catalogue::Stop*>(catalogue_->GetAllStops().begin(), catalogue_->GetAllStops().end());
-//}
-
 const std::vector<t_catalogue::Stop*> RequestHandler::GetMap () const {
     std::vector<t_catalogue::Stop*> ans;
     const auto stop_list = catalogue_->GetAllStops();
