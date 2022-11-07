@@ -11,6 +11,7 @@
 #include "json.h"
 #include "json_builder.h"
 #include "bus_router.h"
+#include "serialization.h"
 
 namespace json_reader {
 
@@ -20,6 +21,7 @@ class JsonReader {
     request_handler::RequestHandler* const handler_;
     renderer::MapRenderer* const render_;
     router::BusRouter* const router_;
+    serialization::Serializator* const serializator_;
 
     std::optional<json::Document> json_document_;
 
@@ -43,12 +45,18 @@ class JsonReader {
 
     void ParsingRoutingSettings(const json::Node& settings);
 
+    void ParsingSerializationSettings(const json::Node& settings);
+
 public:
-    explicit JsonReader(request_handler::RequestHandler* const handler, renderer::MapRenderer* const render, router::BusRouter* const router) :
+    explicit JsonReader(request_handler::RequestHandler* const handler,
+                        renderer::MapRenderer* const render,
+                        router::BusRouter* const router,
+                        serialization::Serializator* const serializator) :
         catalogue_(handler->GetTransportCatalogue ()),
         handler_(handler),
         render_(render),
-        router_(router) {
+        router_(router),
+        serializator_(serializator) {
     };
 
     void ReadJSON (std::istream& input);

@@ -37,9 +37,7 @@ public:
 
 }
 
-class MapRenderer {
-
-struct {
+struct Settings {
     double width;
     double height;
     double padding;
@@ -54,7 +52,11 @@ struct {
     svg::Color underlayer_color;
     double underlayer_width;
     std::vector<svg::Color> color_palette;
-} settings_;
+};
+
+class MapRenderer {
+
+    Settings settings_;
 
     svg::Polyline RenderBusRoute (const t_catalogue::Bus* bus_It, const detail::SphereProjector& function, size_t num_palette) const;
     svg::Text RenderDefaultUnderlayer(const svg::Point coordinates, const std::string& name) const;
@@ -91,6 +93,7 @@ public:
 
     svg::Document RenderMap (const std::vector<t_catalogue::Bus*>buses, const std::vector<t_catalogue::Stop*> map) const;
 
+    const Settings& GetSettngs () const;
 };
 
 namespace detail {

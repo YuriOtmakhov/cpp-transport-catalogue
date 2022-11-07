@@ -26,6 +26,14 @@ BusRouter& BusRouter::SetVelocity(double velosity) {
     return *this;
 }
 
+int BusRouter::GetWaitTime () const {
+    return bus_wait_time_;
+}
+
+double BusRouter::GetVelocity () const {
+    return bus_velocity;
+}
+
 bool BusRouter::IsInit() const {
     return router_.has_value();
 }

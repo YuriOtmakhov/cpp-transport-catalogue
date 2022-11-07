@@ -35,9 +35,13 @@ public:
 
     void AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array);
 
-    const std::list<Bus*> GetAllBus () const;
+    void AddDistance(std::string_view stop_a, std::string_view stop_b, size_t distance);
 
-    const std::list<Stop*> GetAllStops () const;
+    const std::list<Bus*>& GetAllBus () const;
+
+    const std::list<Stop*>& GetAllStops () const;
+
+    const std::unordered_map<std::pair<Stop*, Stop*>, size_t, DistanceHasher>& GetAllStopToStopDistance () const;
 
     Stop* FindStop(const std::string_view str) const;
 

@@ -39,6 +39,9 @@ public:
     BusRouter& SetWaitTime(int time);
     BusRouter& SetVelocity(double velosity);
 
+    int GetWaitTime () const;
+    double GetVelocity () const;
+
     bool IsInit() const;
     operator bool () const;
 

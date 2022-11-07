@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package db;
+
+import "svg.proto";
+
+message MapSettings {
+    double width = 1;
+    double height = 2;
+    double padding = 3;
+    double stroke_width = 4;
+    double stop_radius = 5;
+    double bus_lable_font_size = 6;
+    Point bus_lable_offset = 7;
+    double stop_lable_font_size = 8;
+    Point stop_lable_offset = 9;
+    Color underlayer_color = 10;
+    double underlayer_width = 11;
+    repeated Color color_palette = 12;
+}

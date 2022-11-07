@@ -192,14 +192,24 @@ void JsonReader::ParsingRoutingSettings(const json::Node& settings) {
             .SetVelocity(settings.AsMap().at("bus_velocity"s).AsDouble());
 }
 
+void JsonReader::ParsingSerializationSettings(const json::Node& settings) {
+    serializator_->SetPath(settings.AsMap().at("file"s).AsString());
+}
+
 void JsonReader::ReadJSON (std::istream& input) {
     json_document_ = json::Load(input);
 
-    ParsingBaseRequests( (*json_document_).GetRoot().AsMap().at("base_requests"s) );
+    if ((*json_document_).GetRoot().AsMap().count("base_requests"s))
+        ParsingBaseRequests( (*json_document_).GetRoot().AsMap().at("base_requests"s) );
 
-    ParsingRenderSettings( (*json_document_).GetRoot().AsMap().at("render_settings"s) );
+    if ((*json_document_).GetRoot().AsMap().count("render_settings"s))
+        ParsingRenderSettings( (*json_document_).GetRoot().AsMap().at("render_settings"s) );
 
-    ParsingRoutingSettings( (*json_document_).GetRoot().AsMap().at("routing_settings"s) );
+    if ((*json_document_).GetRoot().AsMap().count("routing_settings"s))
+        ParsingRoutingSettings( (*json_document_).GetRoot().AsMap().at("routing_settings"s) );
+
+    if ((*json_document_).GetRoot().AsMap().count("serialization_settings"s))
+        ParsingSerializationSettings( (*json_document_).GetRoot().AsMap().at("serialization_settings"s) );
 
 }
 

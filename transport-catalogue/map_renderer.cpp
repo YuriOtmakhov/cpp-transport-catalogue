@@ -16,6 +16,10 @@ svg::Point detail::SphereProjector::operator()(geo::Coordinates coords) const {
     };
 }
 
+const Settings& MapRenderer::GetSettngs () const {
+    return settings_;
+}
+
 MapRenderer& MapRenderer::SetBorder(double width, double height, double padding) {
     settings_.width = std::move(width);
     settings_.height = std::move(height);

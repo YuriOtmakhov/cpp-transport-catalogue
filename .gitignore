@@ -2,5 +2,6 @@ transport-catalogue/bin
 transport-catalogue/obj
 transport-catalogue/input_*
 transport-catalogue/cpp-transport-catalogue*
-*.txt
 *.json
+transport-catalogue/s10_final_opentest_
+build_*

@@ -53,11 +53,16 @@ void TransportCatalogue::AddBus(std::string_view bus_name, const std::vector<std
 
 }
 
+void TransportCatalogue::AddDistance(std::string_view stop_a, std::string_view stop_b, size_t distance) {
+    stop_to_stop_distance_[ std::make_pair( FindStop(stop_a), FindStop(stop_b))] = distance;
+}
+
 void TransportCatalogue::AddDistance(std::string_view stop_a, const std::list<std::pair<std::string_view, size_t>> distance_array) {
-    Stop* ptr_stop_a = FindStop(stop_a);
+//    Stop* ptr_stop_a = FindStop(stop_a);
 
     for (const auto& [stop_b, distance]: distance_array)
-        stop_to_stop_distance_[ std::make_pair( ptr_stop_a, FindStop(stop_b))] = distance;
+        AddDistance(stop_a, stop_b, distance);
+//        stop_to_stop_distance_[ std::make_pair( ptr_stop_a, FindStop(stop_b))] = distance;
 }
 
 Stop* TransportCatalogue::FindStop(const std::string_view str) const {
@@ -78,10 +83,14 @@ size_t TransportCatalogue::GetDistance (Stop* stop_a, Stop* stop_b) const{
     return stop_to_stop_distance_.at({stop_b,stop_a});
 }
 
-const std::list<Bus*> TransportCatalogue::GetAllBus () const {
+const std::list<Bus*>& TransportCatalogue::GetAllBus () const {
     return buses_;
 }
 
-const std::list<Stop*> TransportCatalogue::GetAllStops () const {
+const std::list<Stop*>& TransportCatalogue::GetAllStops () const {
     return stops_;
+}
+
+const std::unordered_map<std::pair<Stop*, Stop*>, size_t, TransportCatalogue::DistanceHasher>& TransportCatalogue::GetAllStopToStopDistance () const {
+    return stop_to_stop_distance_;
 }
